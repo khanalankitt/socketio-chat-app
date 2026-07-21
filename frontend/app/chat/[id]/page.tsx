@@ -9,6 +9,7 @@ import { getMessages, markAsRead } from "@/services/message";
 import { getChatById } from "@/services/chat";
 import { getSocket } from "@/lib/socket";
 import { useCurrentUser } from "../layout";
+import Image from "next/image";
 
 export default function ChatPage() {
   const { id: chatId } = useParams<{ id: string }>();
@@ -93,7 +94,17 @@ export default function ChatPage() {
         />
         <div className="relative shrink-0">
           <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 text-xl flex items-center justify-center font-semibold">
-            {partner?.username?.[0]?.toUpperCase() ?? "?"}
+            {partner?.avatar ? (
+              <Image
+                src={partner.avatar}
+                alt={partner.username}
+                height={100}
+                width={100}
+                className="w-full h-full object-cover rounded-full"
+              />
+            ) : (
+              (partner?.username?.[0]?.toUpperCase() ?? "?")
+            )}{" "}
           </div>
           {partner?.isOnline && (
             <span className="absolute -bottom-0.5 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />

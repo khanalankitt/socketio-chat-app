@@ -4,6 +4,7 @@ export interface IUser {
   avatar: string;
   isOnline: boolean;
   lastSeen: string;
+  email: string;
 }
 
 export interface IMessage {

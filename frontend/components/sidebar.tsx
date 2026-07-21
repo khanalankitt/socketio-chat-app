@@ -3,16 +3,19 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, MessageSquareText, LogOut } from "lucide-react";
+import { Search, MessageSquareText, LogOut, UserRound } from "lucide-react";
 import Swal from "sweetalert2";
 import { IChat, IUser } from "@/types";
 import { getUserChats, createOrGetChat } from "@/services/chat";
 import { searchUsers } from "@/services/user";
 import { logout } from "@/services/auth";
+import { useCurrentUser } from "@/app/chat/layout";
+import Image from "next/image";
 
 export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
+  const currentUser = useCurrentUser();
   const [chats, setChats] = useState<IChat[]>([]);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<IUser[]>([]);
@@ -114,7 +117,6 @@ export default function Sidebar() {
           />
         </motion.div>
 
-        {/* Floating results popup */}
         <AnimatePresence>
           {query && (
             <motion.div
@@ -135,8 +137,18 @@ export default function Sidebar() {
                     className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 transition-colors text-left"
                   >
                     <div className="relative shrink-0">
-                      <div className="w-9 h-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-semibold">
-                        {user.username?.[0]?.toUpperCase() ?? "?"}
+                      <div className="w-9 h-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-semibold overflow-hidden">
+                        {user.avatar ? (
+                          <Image
+                            src={user.avatar}
+                            alt={user.username}
+                            height={100}
+                            width={100}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          (user.username?.[0]?.toUpperCase() ?? "?")
+                        )}
                       </div>
                       {user.isOnline && (
                         <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full" />
@@ -158,7 +170,7 @@ export default function Sidebar() {
       </div>
 
       {/* Chat list */}
-      <div className="flex-1 overflow-y-auto mt-2 px-1">
+      <div className="flex-1 overflow-y-auto px-1">
         {chats.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-gray-300 gap-2 px-6 text-center">
             <MessageSquareText size={36} strokeWidth={1.5} />
@@ -170,6 +182,11 @@ export default function Sidebar() {
 
         {chats.map((chat, i) => {
           const isActive = pathname === `/chat/${chat._id}`;
+          const other = chat.participants.find(
+            (p) => p._id !== currentUser?._id,
+          );
+          if (!other) return null;
+
           return (
             <motion.button
               key={chat._id}
@@ -183,12 +200,22 @@ export default function Sidebar() {
                   : "border-transparent hover:bg-gray-100"
               }`}
             >
-              <div className="w-11 h-11 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-semibold shrink-0">
-                {chat.participants[0]?.username?.[0]?.toUpperCase() ?? "?"}
+              <div className="w-11 h-11 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-semibold shrink-0 overflow-hidden">
+                {other.avatar ? (
+                  <Image
+                    height={100}
+                    width={100}
+                    src={other.avatar}
+                    alt={other.username}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  (other.username?.[0]?.toUpperCase() ?? "?")
+                )}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-gray-800 truncate">
-                  {chat.participants[0]?.username ?? "Unknown"}
+                  {other.username}
                 </p>
                 <p className="text-xs text-gray-400 truncate">
                   {chat.lastMessage && typeof chat.lastMessage === "object"
@@ -201,11 +228,18 @@ export default function Sidebar() {
         })}
       </div>
 
-      {/* Logout */}
-      <div className="px-4 py-4 pt-5 shadow-sm border-t border-gray-200 ">
+      {/* Footer: Profile + Logout */}
+      <div className="px-4 py-4 pt-5 shadow-sm border-t border-gray-200 flex items-center gap-2">
+        <button
+          onClick={() => router.push("/profile")}
+          className="flex-1 flex items-center justify-center gap-2 cursor-pointer text-gray-700 border border-gray-200 bg-gray-50 hover:bg-gray-100 rounded-full py-2.5 text-sm font-semibold transition-colors"
+        >
+          <UserRound size={16} />
+          {currentUser?.username?.split(" ")[0] ?? "Profile"}
+        </button>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center cursor-pointer gap-2 text-red-600 border border-red-300 bg-red-50 hover:bg-red-100 rounded-full py-2.5 text-sm font-semibold transition-colors"
+          className="flex-1 flex items-center justify-center cursor-pointer gap-2 text-red-600 border border-red-300 bg-red-50 hover:bg-red-100 rounded-full py-2.5 text-sm font-semibold transition-colors"
         >
           <LogOut size={16} />
           Logout

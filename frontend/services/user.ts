@@ -20,3 +20,18 @@ export async function getProfile(): Promise<IUser> {
   if (!res.ok) throw new Error(data.message || "Failed to fetch profile");
   return data;
 }
+
+export async function updateProfile(data: {
+  username?: string;
+  avatar?: string;
+}): Promise<IUser> {
+  const res = await fetch(`${BASE_URL}/user/me`, {
+    method: "PATCH",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  const result = await res.json();
+  if (!res.ok) throw new Error(result.message || "Failed to update profile");
+  return result;
+}

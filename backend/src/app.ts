@@ -1,11 +1,8 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import routes from "./routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
-
-dotenv.config();
 
 const app = express();
 
@@ -20,6 +17,11 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api", routes);
+
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
 app.use(errorHandler);
 
 export default app;

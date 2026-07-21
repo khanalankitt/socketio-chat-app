@@ -36,10 +36,6 @@ export default function AuthTabs() {
               password: formData.password,
             });
 
-      if (data?.message && !data?.user) {
-        throw new Error(data.message);
-      }
-
       Swal.fire({
         icon: "success",
         title: activeTab === "login" ? "Logged in!" : "Account created!",

@@ -22,6 +22,13 @@ export class UserRepository {
   ): Promise<IUser | null> {
     return User.findByIdAndUpdate(id, data, { new: true });
   }
+
+  async setPresence(
+    id: Types.ObjectId,
+    data: { isOnline: boolean; socketId: string | null; lastSeen?: Date },
+  ): Promise<void> {
+    await User.findByIdAndUpdate(id, data);
+  }
 }
 
 export default new UserRepository();

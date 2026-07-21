@@ -20,15 +20,15 @@ export const authenticate = async (
 
     const payload = verifyToken(token);
 
-    const user = await User.findById(payload.id);
+    const user = await User.findById(payload.sub);
     if (!user) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized",
       });
     }
-
     req.user = user;
+    (req as any)._id = user._id.toString();
 
     next();
   } catch {

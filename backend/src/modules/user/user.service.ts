@@ -2,8 +2,8 @@ import { Types } from "mongoose";
 import userRepository from "./user.repository.js";
 
 export class UserService {
-  async getProfile(userId: string) {
-    const user = await userRepository.findById(new Types.ObjectId(userId));
+  async getProfile(_id: string) {
+    const user = await userRepository.findById(new Types.ObjectId(_id));
     if (!user) throw new Error("User not found");
     return user;
   }
@@ -20,14 +20,17 @@ export class UserService {
     }
     return userRepository.searchByUsername(
       query.trim(),
-      new Types.ObjectId(requesterId)
+      new Types.ObjectId(requesterId),
     );
   }
 
-  async updateProfile(userId: string, data: { username?: string; avatar?: string }) {
+  async updateProfile(
+    _id: string,
+    data: { username?: string; avatar?: string },
+  ) {
     const updated = await userRepository.updateProfile(
-      new Types.ObjectId(userId),
-      data
+      new Types.ObjectId(_id),
+      data,
     );
     if (!updated) throw new Error("User not found");
     return updated;

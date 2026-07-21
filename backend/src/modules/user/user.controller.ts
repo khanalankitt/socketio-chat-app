@@ -4,8 +4,8 @@ import userService from "./user.service.js";
 export class UserController {
   async getProfile(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = (req as any).userId;
-      const user = await userService.getProfile(userId);
+      const _id = (req as any)._id;
+      const user = await userService.getProfile(_id);
       res.status(200).json(user);
     } catch (err) {
       next(err);
@@ -24,7 +24,7 @@ export class UserController {
 
   async searchUsers(req: Request, res: Response, next: NextFunction) {
     try {
-      const requesterId = (req as any).userId;
+      const requesterId = (req as any)._id;
       const query = (req.query.q as string) ?? "";
       const users = await userService.searchUsers(query, requesterId);
       res.status(200).json(users);
@@ -35,9 +35,9 @@ export class UserController {
 
   async updateProfile(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = (req as any).userId;
+      const _id = (req as any)._id;
       const { username, avatar } = req.body;
-      const updated = await userService.updateProfile(userId, {
+      const updated = await userService.updateProfile(_id, {
         username,
         avatar,
       });

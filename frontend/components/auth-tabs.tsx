@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { LucideIcon, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import { login, register } from "@/services/auth";
+import { useRouter } from "next/navigation";
 
 type Tab = "login" | "register";
 
@@ -17,6 +18,8 @@ export default function AuthTabs() {
     password: "",
     username: "",
   });
+
+  const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -35,6 +38,8 @@ export default function AuthTabs() {
               email: formData.email,
               password: formData.password,
             });
+
+      router.replace("/chat");
 
       Swal.fire({
         icon: "success",

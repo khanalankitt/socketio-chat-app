@@ -5,15 +5,21 @@ import { useParams } from "next/navigation";
 import { IMessage } from "@/types";
 import { getMessages, markAsRead } from "@/services/message";
 import { getSocket } from "@/lib/socket";
+import { getProfile } from "@/services/user";
 
 export default function ChatPage() {
   const { id: chatId } = useParams<{ id: string }>();
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [content, setContent] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!chatId) return;
+
+    getProfile()
+      .then((user) => setCurrentUserId(user._id))
+      .catch(console.error);
 
     getMessages(chatId).then(setMessages).catch(console.error);
     markAsRead(chatId).catch(console.error);
@@ -51,11 +57,28 @@ export default function ChatPage() {
   return (
     <div className="h-screen flex flex-col">
       <div className="flex-1 overflow-y-auto p-4 space-y-2">
-        {messages.map((msg) => (
-          <div key={msg._id} className="p-2 rounded-md bg-gray-100 max-w-xs">
-            <p className="text-sm">{msg.content}</p>
-          </div>
-        ))}
+        {messages.map((msg) => {
+          const senderId =
+            typeof msg.sender === "string" ? msg.sender : msg.sender._id;
+          const isOwnMessage = senderId === currentUserId;
+
+          return (
+            <div
+              key={msg._id}
+              className={`flex ${isOwnMessage ? "justify-end" : "justify-start"}`}
+            >
+              <div
+                className={`p-2 rounded-md max-w-xs ${
+                  isOwnMessage
+                    ? "bg-black text-white"
+                    : "bg-gray-100 text-black"
+                }`}
+              >
+                <p className="text-sm">{msg.content}</p>
+              </div>
+            </div>
+          );
+        })}
         <div ref={bottomRef} />
       </div>
 

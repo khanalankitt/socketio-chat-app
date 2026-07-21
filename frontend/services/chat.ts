@@ -2,12 +2,12 @@ import { IChat } from "@/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-export async function createOrGetChat(otherUserId: string): Promise<IChat> {
+export async function createOrGetChat(other_id: string): Promise<IChat> {
   const res = await fetch(`${BASE_URL}/chat`, {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ otherUserId }),
+    body: JSON.stringify({ other_id }),
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || "Failed to create chat");

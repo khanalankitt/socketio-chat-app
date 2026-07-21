@@ -6,7 +6,6 @@ export class ChatController {
     try {
       const _id = (req as any)._id;
       const { other_id } = req.body;
-      console.log(_id, other_id);
 
       const chat = await chatService.createOrGetChat(_id, other_id);
       res.status(200).json(chat);

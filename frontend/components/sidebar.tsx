@@ -83,7 +83,7 @@ export default function Sidebar() {
       Swal.fire({
         icon: "error",
         title: "Logout failed",
-        text: err.message || "Something went wrong. Please try again.",
+        text:"Something went wrong. Please try again.",
         timer: 2500,
         timerProgressBar: true,
         showConfirmButton: false,

@@ -105,18 +105,9 @@ export default function ProfilePageClient() {
               )}
             </div>
 
-            <h2 className="text-2xl font-bold text-gray-800 mt-5 text-center">
+            <h2 className="text-3xl font-bold text-gray-800 mt-5 text-center">
               {formData.username}
             </h2>
-
-            <p className="mt-2 flex items-center gap-2 text-sm text-gray-500">
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  user?.isOnline ? "bg-green-500" : "bg-gray-400"
-                }`}
-              />
-              {user?.isOnline ? "Active now" : "Offline"}
-            </p>
           </div>
 
           {/* RIGHT */}
